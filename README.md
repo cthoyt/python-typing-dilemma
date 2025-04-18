@@ -5,7 +5,12 @@ when using [PEP-696](https://peps.python.org/pep-0696/) defaults in
 `typing.TypeVar`.
 
 The goal is to have a function `from_record()` that knows to make a base class
-by default, but also allows for passing derived classes from the base class
+by default, but also allows for passing derived classes from the base class.
+
+It should know if you pass a class to `element_cls`, to dispatch to creating
+that class and then should be smart enough to narrow the return type. If no
+`element_cls` is returned, then it shouldn't narrow the return type, and instead
+just use the default.
 
 ```python
 REC = {"a": "B"}
