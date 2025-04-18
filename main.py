@@ -2,7 +2,7 @@
 # requires-python = ">=3.13"
 # ///
 
-from typing import Any, TypeVar, reveal_type
+from typing import Any, TypeVar, reveal_type, overload
 
 type Record = dict[str, Any]
 
@@ -43,3 +43,23 @@ def from_record_2(record: Record, element_cls: type[T] | None = None) -> T:
 reveal_type(from_record_2(REC))  # reveals Element, since this is default
 reveal_type(from_record_2(REC, element_cls=Element))  # reveals Element
 reveal_type(from_record_2(REC, element_cls=DerivedElement))  # reveals DerivedElement
+
+
+# on a third try, I use guido's suggestion in https://github.com/python/mypy/issues/3737#issuecomment-316263133.
+# this doesn't work either
+
+@overload
+def from_record_3(record: Record) -> Element: ...
+
+
+@overload
+def from_record_3(record: Record, element_cls: type[T]) -> T: ...
+
+
+def from_record_3(record: Record, element_cls):
+    return element_cls(record)
+
+
+reveal_type(from_record_3(REC))  # reveals Element, since this is default
+reveal_type(from_record_3(REC, element_cls=Element))  # reveals Element
+reveal_type(from_record_3(REC, element_cls=DerivedElement))  # reveals DerivedElement
